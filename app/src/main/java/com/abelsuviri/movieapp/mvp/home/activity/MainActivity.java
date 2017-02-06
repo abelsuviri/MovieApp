@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import com.abelsuviri.movieapp.R;
 import com.abelsuviri.movieapp.mvp.home.presenter.HomePresenter;
 import com.abelsuviri.movieapp.mvp.home.view.HomeView;
+import com.abelsuviri.movieapp.utils.MovieListScrollListener;
 import com.abelsuviri.movieapp.utils.adapter.MovieListAdapter;
 
 import butterknife.BindView;
@@ -20,6 +21,9 @@ public class MainActivity extends AppCompatActivity implements HomeView {
     RecyclerView mMovieList;
 
     private HomePresenter mHomePresenter;
+    private MovieListScrollListener mScrollListener;
+    private boolean isFirstTime = true;
+    private MovieListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements HomeView {
         mHomePresenter = new HomePresenter(this);
 
         makeRequest();
+        setupList();
     }
 
     @Override
@@ -45,11 +50,12 @@ public class MainActivity extends AppCompatActivity implements HomeView {
 
     @Override
     public void showMovies(MovieListAdapter adapter) {
-        mMovieList.setAdapter(adapter);
-        mMovieList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mMovieList.getContext(),
-            LinearLayoutManager.VERTICAL);
-        mMovieList.addItemDecoration(dividerItemDecoration);
+        if (isFirstTime) {
+            mAdapter = adapter;
+            mMovieList.setAdapter(adapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -60,5 +66,23 @@ public class MainActivity extends AppCompatActivity implements HomeView {
     private void makeRequest() {
         mHomePresenter.nextPage();
         mHomePresenter.getMovies(this);
+    }
+
+    private void setupList() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mMovieList.setLayoutManager(linearLayoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mMovieList.getContext(),
+            LinearLayoutManager.VERTICAL);
+        mMovieList.addItemDecoration(dividerItemDecoration);
+
+        mScrollListener = new MovieListScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore() {
+                isFirstTime = false;
+                makeRequest();
+            }
+        };
+
+        mMovieList.addOnScrollListener(mScrollListener);
     }
 }

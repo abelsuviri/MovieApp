@@ -39,7 +39,7 @@ public class MovieHolder extends RecyclerView.ViewHolder {
     public void bindMovies(Movie movie) {
         Picasso.with(mContext).load(Constants.PICTURE_URL + movie.getPicture())
             .resize(250, 300)
-            .centerCrop()
+            .centerInside()
             .into(mPicture);
 
         mTitle.setText(movie.getTitle());
