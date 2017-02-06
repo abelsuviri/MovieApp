@@ -1,6 +1,6 @@
 package com.abelsuviri.movieapp.mvp.home.view;
 
-import com.abelsuviri.movieapp.model.MoviesModel;
+import com.abelsuviri.movieapp.utils.adapter.MovieListAdapter;
 
 /**
  * @author Abel Suviri
@@ -11,7 +11,7 @@ public interface HomeView {
 
     void dismissProgress();
 
-    void showMovies(MoviesModel moviesModel);
+    void showMovies(MovieListAdapter adapter);
 
     void showError(String error);
 }

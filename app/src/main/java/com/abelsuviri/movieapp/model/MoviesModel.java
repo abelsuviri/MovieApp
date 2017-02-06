@@ -11,13 +11,13 @@ import java.util.List;
 public class MoviesModel {
 
     @SerializedName("results")
-    List<Movie> movies;
+    List<Movies> mMovies;
 
-    public MoviesModel(List<Movie> movies) {
-        this.movies = movies;
+    public MoviesModel(List<Movies> movies) {
+        this.mMovies = movies;
     }
 
-    public List<Movie> getMovies() {
-        return movies;
+    public List<Movies> getMovies() {
+        return mMovies;
     }
 }
