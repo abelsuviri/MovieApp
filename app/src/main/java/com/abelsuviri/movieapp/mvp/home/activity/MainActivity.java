@@ -1,17 +1,21 @@
 package com.abelsuviri.movieapp.mvp.home.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.abelsuviri.movieapp.R;
 import com.abelsuviri.movieapp.mvp.home.presenter.HomePresenter;
 import com.abelsuviri.movieapp.mvp.home.view.HomeView;
+import com.abelsuviri.movieapp.mvp.search.activity.SearchActivity;
 import com.abelsuviri.movieapp.utils.MovieListScrollListener;
 import com.abelsuviri.movieapp.utils.adapter.MovieListAdapter;
 
@@ -89,6 +93,23 @@ public class MainActivity extends AppCompatActivity implements HomeView {
                 makeRequest();
             })
             .show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                startActivity(new Intent(this, SearchActivity.class));
+                overridePendingTransition(R.anim.appear_from_bottom, R.anim.hold);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void makeRequest() {

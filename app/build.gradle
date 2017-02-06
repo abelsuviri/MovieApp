@@ -38,17 +38,17 @@ dependencies {
     })
     compile "com.android.support:appcompat-v7:${androidSupportVersion}"
     compile "com.android.support:design:${androidSupportVersion}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     compile "com.jakewharton:butterknife:${butterknifeVersion}"
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
+
+    annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
+
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'io.reactivex:rxjava:1.1.6'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
-
-    annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
-
     testCompile 'junit:junit:4.12'
 }

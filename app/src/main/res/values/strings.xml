@@ -3,4 +3,5 @@
     <string name="loading">Loading&#8230;</string>
     <string name="request_error">Error on request: %s</string>
     <string name="retry">Retry</string>
+    <string name="search">Search</string>
 </resources>
