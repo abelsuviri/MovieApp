@@ -14,6 +14,6 @@ public interface MovieRequest {
     @GET("3/discover/movie?sort_by=popularity.desc")
     Observable<MoviesModel> getMovies(
         @Query("api_key") String apiKey,
-        @Query("page") String page
+        @Query("page") int page
     );
 }
