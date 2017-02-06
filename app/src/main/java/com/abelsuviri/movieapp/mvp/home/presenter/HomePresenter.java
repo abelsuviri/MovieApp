@@ -1,7 +1,6 @@
 package com.abelsuviri.movieapp.mvp.home.presenter;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.abelsuviri.movieapp.BuildConfig;
 import com.abelsuviri.movieapp.domain.MovieApi;
@@ -37,21 +36,24 @@ public class HomePresenter {
     }
 
     public void getMovies(Context context) {
-        MovieRequest movieRequest = MovieApi.getApiClient().create(MovieRequest.class);
-        Observable<MoviesModel> movies = movieRequest.getMovies(BuildConfig.API_KEY, mPage);
-        movies.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe(moviesModel -> {
-                for (Movies movie : moviesModel.getMovies()) {
-                    String[] splitDate = movie.getDate().split("-");
-                    String year = splitDate[0];
-                    mMovies.add(new Movie(movie.getTitle(), year, movie.getPicture()));
-                }
+        if (mHomeView != null) {
+            mHomeView.showProgress();
 
-                if (mHomeView != null) {
-                     mHomeView.showMovies(new MovieListAdapter(mMovies, context));
-                }
-            }, error -> {
-                mHomeView.showError(error.getMessage());
-            });
+            MovieRequest movieRequest = MovieApi.getApiClient().create(MovieRequest.class);
+            Observable<MoviesModel> movies = movieRequest.getMovies(BuildConfig.API_KEY, mPage);
+            movies.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(moviesModel -> {
+                    for (Movies movie : moviesModel.getMovies()) {
+                        String[] splitDate = movie.getDate().split("-");
+                        String year = splitDate[0];
+                        mMovies.add(new Movie(movie.getTitle(), year, movie.getPicture()));
+                    }
+                    mHomeView.showMovies(new MovieListAdapter(mMovies, context));
+                    mHomeView.dismissProgress();
+                }, error -> {
+                    mHomeView.showError(error.getMessage());
+                    mHomeView.dismissProgress();
+                });
+        }
     }
 }

@@ -1,16 +1,21 @@
 package com.abelsuviri.movieapp.mvp.home.activity;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.abelsuviri.movieapp.R;
 import com.abelsuviri.movieapp.mvp.home.presenter.HomePresenter;
 import com.abelsuviri.movieapp.mvp.home.view.HomeView;
 import com.abelsuviri.movieapp.utils.MovieListScrollListener;
 import com.abelsuviri.movieapp.utils.adapter.MovieListAdapter;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,10 +25,15 @@ public class MainActivity extends AppCompatActivity implements HomeView {
     @BindView(R.id.movieList)
     RecyclerView mMovieList;
 
+    @BindView(R.id.progressLayer)
+    RelativeLayout mProgressLayer;
+
     private HomePresenter mHomePresenter;
     private MovieListScrollListener mScrollListener;
     private boolean isFirstTime = true;
+    private boolean isFromError = false;
     private MovieListAdapter mAdapter;
+    private Snackbar mLoadingSnackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +44,34 @@ public class MainActivity extends AppCompatActivity implements HomeView {
 
         mHomePresenter = new HomePresenter(this);
 
+        mLoadingSnackbar = Snackbar.make(mMovieList, getString(R.string.loading), Snackbar.LENGTH_INDEFINITE);
+
         makeRequest();
         setupList();
     }
 
     @Override
     public void showProgress() {
-
+        if (isFirstTime) {
+            mProgressLayer.setVisibility(View.VISIBLE);
+        } else {
+            mLoadingSnackbar.show();
+        }
     }
 
     @Override
     public void dismissProgress() {
-
+        if (isFirstTime) {
+            mProgressLayer.setVisibility(View.GONE);
+        } else {
+            mLoadingSnackbar.dismiss();
+        }
     }
 
     @Override
     public void showMovies(MovieListAdapter adapter) {
+        isFromError = false;
+
         if (isFirstTime) {
             mAdapter = adapter;
             mMovieList.setAdapter(adapter);
@@ -60,11 +82,20 @@ public class MainActivity extends AppCompatActivity implements HomeView {
 
     @Override
     public void showError(String error) {
-
+        Snackbar.make(mMovieList, String.format(Locale.getDefault(),
+            getString(R.string.request_error), error), Snackbar.LENGTH_INDEFINITE)
+            .setAction(getString(R.string.retry), OnClick -> {
+                isFromError = true;
+                makeRequest();
+            })
+            .show();
     }
 
     private void makeRequest() {
-        mHomePresenter.nextPage();
+        if (!isFromError) {
+            mHomePresenter.nextPage();
+        }
+
         mHomePresenter.getMovies(this);
     }
 
