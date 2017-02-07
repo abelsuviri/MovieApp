@@ -5,37 +5,31 @@ package com.abelsuviri.movieapp.utils.adapter.holder;
  */
 
 public class Movie {
-    private String title;
-    private String year;
-    private String picture;
+    private String mTitle;
+    private String mYear;
+    private String mPicture;
+    private String mOverview;
 
-    public Movie(String title, String year, String picture) {
-        this.title = title;
-        this.year = year;
-        this.picture = picture;
+    public Movie(String title, String year, String picture, String overview) {
+        this.mTitle = title;
+        this.mYear = year;
+        this.mPicture = picture;
+        this.mOverview = overview;
     }
 
     public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+        return mTitle;
     }
 
     public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
+        return mYear;
     }
 
     public String getPicture() {
-        return picture;
+        return mPicture;
     }
 
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public String getOverview() {
+        return mOverview;
     }
 }

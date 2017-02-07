@@ -26,6 +26,7 @@ public class HomePresenter {
     private final HomeView mHomeView;
     private int mPage = 0;
     private ArrayList<Movie> mMovies = new ArrayList<>();
+    private MovieRequest mMovieRequest = MovieApi.getApiClient().create(MovieRequest.class);
 
     public HomePresenter(HomeView homeView) {
         this.mHomeView = homeView;
@@ -35,18 +36,25 @@ public class HomePresenter {
         mPage++;
     }
 
-    public void getMovies(Context context) {
+    private void resetPage() {
+        mPage = 1;
+    }
+
+    public void getMovies(Context context, boolean shouldClear) {
         if (mHomeView != null) {
             mHomeView.showProgress();
 
-            MovieRequest movieRequest = MovieApi.getApiClient().create(MovieRequest.class);
-            Observable<MoviesModel> movies = movieRequest.getMovies(BuildConfig.API_KEY, mPage);
+            if (shouldClear) {
+                mMovies.clear();
+                resetPage();
+            }
+
+            Observable<MoviesModel> movies = mMovieRequest.getMovies(BuildConfig.API_KEY, mPage);
             movies.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(moviesModel -> {
                     for (Movies movie : moviesModel.getMovies()) {
-                        String[] splitDate = movie.getDate().split("-");
-                        String year = splitDate[0];
-                        mMovies.add(new Movie(movie.getTitle(), year, movie.getPicture()));
+                        mMovies.add(new Movie(movie.getTitle(), getYear(movie.getDate()),
+                            movie.getPicture(), ""));
                     }
                     mHomeView.showMovies(new MovieListAdapter(mMovies, context));
                     mHomeView.dismissProgress();
@@ -55,5 +63,32 @@ public class HomePresenter {
                     mHomeView.dismissProgress();
                 });
         }
+    }
+
+    public void getSearchedMovies(String search, Context context) {
+        if (mHomeView != null) {
+            mHomeView.showProgress();
+
+            mMovies.clear();
+
+            Observable<MoviesModel> movies = mMovieRequest.getSearchedMovies(BuildConfig.API_KEY, search);
+            movies.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(moviesModel -> {
+                    for (Movies movie : moviesModel.getMovies()) {
+                        mMovies.add(new Movie(movie.getTitle(), getYear(movie.getDate()),
+                            movie.getPicture(), movie.getOverview()));
+                    }
+                    mHomeView.showMovies(new MovieListAdapter(mMovies, context));
+                    mHomeView.dismissProgress();
+                }, error -> {
+                    mHomeView.showError(error.getMessage());
+                    mHomeView.dismissProgress();
+                });
+        }
+    }
+
+    private String getYear(String date) {
+        String[] splitDate = date.split("-");
+        return splitDate[0];
     }
 }

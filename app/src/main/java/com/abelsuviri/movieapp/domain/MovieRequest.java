@@ -16,4 +16,10 @@ public interface MovieRequest {
         @Query("api_key") String apiKey,
         @Query("page") int page
     );
+
+    @GET("/3/search/movie")
+    Observable<MoviesModel> getSearchedMovies(
+        @Query("api_key") String apiKey,
+        @Query("query") String query
+    );
 }

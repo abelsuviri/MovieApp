@@ -27,6 +27,9 @@ public class MovieHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.year)
     TextView mYear;
 
+    @BindView(R.id.overview)
+    TextView mOverview;
+
     private Context mContext;
 
     public MovieHolder(View itemView, Context context) {
@@ -44,5 +47,6 @@ public class MovieHolder extends RecyclerView.ViewHolder {
 
         mTitle.setText(movie.getTitle());
         mYear.setText(movie.getYear());
+        mOverview.setText(movie.getOverview());
     }
 }
